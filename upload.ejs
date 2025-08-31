@@ -1,0 +1,92 @@
+<html>
+<%- include("preset/title"); %>
+
+    <body>
+        <div class="container">
+            <nav class="navbar d-block">
+                <div class="container-fluid">
+                    <span class="navbar-brand" href="#">Modded vehicles</span>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                        aria-labelledby="offcanvasNavbarLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Categories</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                                <li class="nav-item"><a href="../upload"><button type="button"
+                                            class="btn btn-primary btn-lg">Upload a vehicle</button></a></li>
+                                <li class="nav-item"><a class="nav-link" href="commercials">Commercials</a></li>
+                                <li class="nav-item"><a class="nav-link" href="compacts">Compacts</a></li>
+                                <li class="nav-item"><a class="nav-link" href="coupes">Coupes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="emergency">Emergency</a></li>
+                                <li class="nav-item"><a class="nav-link" href="military">Military</a></li>
+                                <li class="nav-item"><a class="nav-link" href="motorcycles">Motorcyles</a></li>
+                                <li class="nav-item"><a class="nav-link" href="muscle">Muscles</a></li>
+                                <li class="nav-item"><a class="nav-link" href="offroad">Offroad</a></li>
+                                <li class="nav-item"><a class="nav-link" href="openwheels">Open Wheels</a></li>
+                                <li class="nav-item"><a class="nav-link" href="planes">Planes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="sedans">Sedans</a></li>
+                                <li class="nav-item"><a class="nav-link" href="service">Service</a></li>
+                                <li class="nav-item"><a class="nav-link" href="sportclassic">Sport Classic</a></li>
+                                <li class="nav-item"><a class="nav-link" href="sports">Sports</a></li>
+                                <li class="nav-item"><a class="nav-link" href="super">Super</a></li>
+                                <li class="nav-item"><a class="nav-link" href="suvs">Suvs</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" action="upload" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="nameOverlay" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" required>
+                        <div id="nameHelp" class="form-text">
+                            Name that will be displayed over the vehicle's image
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selectCategory" class="form-label">Select vehicle category</label>
+                        <select class="form-select" aria-label="categorie select" id="selectCategory" name="categorie" required>
+                            <option value="commercials" selected>Commercial</option>
+                            <option value="compacts">Compact</option>
+                            <option value="coupes">Coupe</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="military">Military</option>
+                            <option value="motorcycles">Motorcyle</option>
+                            <option value="muscles">Muscle</option>
+                            <option value="offroad">Off road</option>
+                            <option value="openwheels">Open wheel</option>
+                            <option value="planes">Plane</option>
+                            <option value="sedans">Sedan</option>
+                            <option value="service">Service</option>
+                            <option value="sportclassic">Sport classic</option>
+                            <option value="sports">Sport</option>
+                            <option value="super">Super</option>
+                            <option value="suvs">Suv</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Select the vehicle file</label>
+                        <input class="form-control" type="file" id="vehicleFileSelect" accept=".GTAVV" name="vehicleFile" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Select the vehicle image to be displayed</label>
+                        <input class="form-control" type="file" aria-describedby="imageWarning" id="imageVehicleSelect"
+                            accept="image/webp, image/png, image/jpeg, image.jpg" name="vehicleImage" required>
+                        <div class="form-text" id="imageWarning">
+                            All other images than the actual vehicle picture will result in your post being deleted !
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Upload</button>
+                </form>
+            </nav>
+        </div>
+    </body>
+
+</html>

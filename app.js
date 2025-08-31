@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const fu = require('express-fileupload');
+const bson = require('bson');
 
 //create app
 const app = express();
@@ -10,6 +12,7 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true, limit: "500ko", parameterLimit: 500}));
 app.use(morgan('dev'));
+app.use(fu());
 
 //connect to db
 mongoose.connect("mongodb+srv://iyafuuhak:8RSoxoyvspOt5OC2@cluster0.dno3x3p.mongodb.net/modded_vehicles?retryWrites=true&w=majority")
@@ -22,10 +25,13 @@ mongoose.connect("mongodb+srv://iyafuuhak:8RSoxoyvspOt5OC2@cluster0.dno3x3p.mong
 const scheme = new mongoose.Schema({ //make new car schema
     name: String,
     categorie: String,
-    file: mongoose.Schema.Types.Buffer,
+    file: {
+        data: mongoose.Schema.Types.Mixed,
+        name: String
+    },
     image: {
-        data: mongoose.Schema.Types.Buffer,
-        contentType: String,
+        data: mongoose.Schema.Types.Mixed,
+        name: String
     }
 }, { collection: 'cars'});
 
@@ -54,18 +60,41 @@ app.get("/upload", (req, res) => {
     res.render("upload.ejs", { title: "upload" });
 });
 
-const save = async (name, categorie, file, image) => {
-    let myID;
-    await CarScheme.create({name, categorie, file, image})
-    .then(object => {
-        console.log("Successfully saved to db");
-        myID = object.id
+const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName) => {
+
+    await CarScheme.create({
+        name: name,
+        categorie: categorie,
+        file: {
+            data: fileBuffer,
+            name: fileName,
+        },
+        image: {
+            data: imageBuffer,
+            name: imageName,
+        }
     })
+    .then(console.log("Successfully saved to db"))
     .catch(error => console.log(error));
 }
 
 app.post("/upload", (req, res) => {
-    save(req.body.vehicleName, req.body.categorie, req.body.vehicleFile);
+    let ss = req.files;
+
+    let fileBuffer = new Buffer.from(ss['vehicleFile']['data'], )
+    let fileName = ss['vehicleFile']['name'];
+    let imageBuffer = Buffer.from(ss['vehicleImage']['data'], 'base64');
+    let imageName = ss['vehicleImage']['name'];
+
+    console.log(ss['vehicleImage']['data']);
+
+    save(req.body['vehicleName'], req.body['categorie'], fileBuffer, fileName, imageBuffer, imageName);
+
+    // let types = ['image/jpeg', 'image/webp', 'image/png', 'image/jpg'];
+    // if (types.includes(ss['vehicleImage']['name'].mimetype)) {
+    //     
+    //     //save(req.body['vehicleName'], req.body['categorie'], fileBuffer, fileName, imageBuffer, imageName);
+    // }
 
     res.redirect('/');
 });
