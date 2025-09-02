@@ -3,14 +3,15 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const fu = require('express-fileupload');
-const bson = require('bson');
+const path = require('path');
+const util = require('util');
 
 //create app
 const app = express();
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use(express.json());
-app.use(express.urlencoded({extended: true, limit: "500ko", parameterLimit: 500}));
+app.use(express.urlencoded({ extended: true, limit: "500ko", parameterLimit: 500 }));
 app.use(morgan('dev'));
 app.use(fu());
 
@@ -25,15 +26,7 @@ mongoose.connect("mongodb+srv://iyafuuhak:8RSoxoyvspOt5OC2@cluster0.dno3x3p.mong
 const scheme = new mongoose.Schema({ //make new car schema
     name: String,
     categorie: String,
-    file: {
-        data: mongoose.Schema.Types.Mixed,
-        name: String
-    },
-    image: {
-        data: mongoose.Schema.Types.Mixed,
-        name: String
-    }
-}, { collection: 'cars'});
+}, { collection: 'cars' });
 
 const CarScheme = mongoose.model('CarScheme', scheme);
 
@@ -60,8 +53,10 @@ app.get("/upload", (req, res) => {
     res.render("upload.ejs", { title: "upload" });
 });
 
-const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName) => {
+const writeFile = util.promisify(fs.writeFile);
 
+const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) => {
+    let myID;
     await CarScheme.create({
         name: name,
         categorie: categorie,
@@ -69,26 +64,40 @@ const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageNam
             data: fileBuffer,
             name: fileName,
         },
-        image: {
-            data: imageBuffer,
-            name: imageName,
-        }
     })
-    .then(console.log("Successfully saved to db"))
-    .catch(error => console.log(error));
+        .then(object => {
+            console.log("Successfully saved to db");
+            myID = object.id;
+        })
+        .catch(error => console.log(error));
+    await writeFile(`./public/images/${myID}.${imageName}`, imageBuffer, (error) => {
+        if (!error) {
+            console.log("File saved with success !");
+        }
+    }).then(() => {
+        fs.rename(`${path.join(__dirname)}/public/images/${myID}.${imageName}`, `${path.join(__dirname)}/public/images/${myID}.${extension}`, (error) => {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log("everything is ok !");
+            }
+        })
+    });
 }
 
 app.post("/upload", (req, res) => {
     let ss = req.files;
 
-    let fileBuffer = new Buffer.from(ss['vehicleFile']['data'], )
-    let fileName = ss['vehicleFile']['name'];
-    let imageBuffer = Buffer.from(ss['vehicleImage']['data'], 'base64');
-    let imageName = ss['vehicleImage']['name'];
+    let mimetype = ss['vehicleImage'].mimetype;
+    const extensions = ["image/png", "image/jpeg", "image/webp", "image/jpg"];
+    if (extensions.includes(mimetype)) {
+        let ext = mimetype.split("/");
+        console.log(ext[1]);
+        save(req.body['vehicleName'], req.body['categorie'], ss['vehicleFile']['data'], ss['vehicleFile']['name'], ss['vehicleImage']['data'], ss['vehicleImage']['name'], ext[1]);
+    }
 
-    console.log(ss['vehicleImage']['data']);
-
-    save(req.body['vehicleName'], req.body['categorie'], fileBuffer, fileName, imageBuffer, imageName);
+    // console.log(ss['vehicleImage']['data']);
 
     // let types = ['image/jpeg', 'image/webp', 'image/png', 'image/jpg'];
     // if (types.includes(ss['vehicleImage']['name'].mimetype)) {
