@@ -1,11 +1,11 @@
-<html>
+<html lang="en" data-bs-theme="dark">
 <%- include("preset/title"); %>
 
     <body>
         <div class="container">
             <nav class="navbar d-block">
                 <div class="container-fluid">
-                    <span class="navbar-brand" href="#">Modded vehicles</span>
+                    <span class="navbar-brand" href="#"><%= title %></span>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
                         aria-label="Toggle navigation">
@@ -42,10 +42,10 @@
                         </div>
                     </div>
                 </div>
-                <form method="post" action="upload">
+                <form method="post" action="upload" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="nameOverlay" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="nameOverlay" formenctype="text/plain" name="vehicleName" required>
+                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" required>
                         <div id="nameHelp" class="form-text">
                             Name that will be displayed over the vehicle's image
                         </div>

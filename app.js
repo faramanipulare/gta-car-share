@@ -54,16 +54,24 @@ app.get("/upload", (req, res) => {
 });
 
 const writeFile = util.promisify(fs.writeFile);
+const readdir = util.promisify(fs.readdir);
 
-const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) => {
+const renameFile = (oldName, newName) => {
+    fs.rename(`${path.join(__dirname)}${oldName}`, `${path.join(__dirname)}/files/${myID}.GTAVV`, (error) => {
+        if (error) {
+            console.log(error);
+        }
+        else {
+            console.log("everything is ok !");
+        }
+    })
+}
+
+const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) => {
     let myID;
     await CarScheme.create({
         name: name,
         categorie: categorie,
-        file: {
-            data: fileBuffer,
-            name: fileName,
-        },
     })
         .then(object => {
             console.log("Successfully saved to db");
@@ -84,26 +92,69 @@ const save = async (name, categorie, fileBuffer, fileName, imageBuffer, imageNam
             }
         })
     });
+    await writeFile(`./files/${myID}.${fileName}`, fileBuffer, (error) => {
+        if (!error) {
+            console.log("File saved with success !");
+        }
+    }).then(() => {
+        console.log("Saved");
+    });
 }
 
 app.post("/upload", (req, res) => {
     let ss = req.files;
+
+    let filename = ss['vehicleFile']['name'];
 
     let mimetype = ss['vehicleImage'].mimetype;
     const extensions = ["image/png", "image/jpeg", "image/webp", "image/jpg"];
     if (extensions.includes(mimetype)) {
         let ext = mimetype.split("/");
         console.log(ext[1]);
-        save(req.body['vehicleName'], req.body['categorie'], ss['vehicleFile']['data'], ss['vehicleFile']['name'], ss['vehicleImage']['data'], ss['vehicleImage']['name'], ext[1]);
+        saveToDB(req.body['vehicleName'],
+            req.body['categorie'],
+            ss['vehicleFile']['data'],
+            ss['vehicleFile']['name'],
+            ss['vehicleImage']['data'],
+            ss['vehicleImage']['name'],
+            ext[1]);
     }
 
-    // console.log(ss['vehicleImage']['data']);
-
-    // let types = ['image/jpeg', 'image/webp', 'image/png', 'image/jpg'];
-    // if (types.includes(ss['vehicleImage']['name'].mimetype)) {
-    //     
-    //     //save(req.body['vehicleName'], req.body['categorie'], fileBuffer, fileName, imageBuffer, imageName);
-    // }
-
     res.redirect('/');
+});
+
+app.get("/download/:id", async (req, res) => {
+    let requestID = req.params.id;
+    let fileName;
+    let name;
+    let file;
+    fs.readdir("files", { withFileTypes: true }, (error, files) => {
+        if (error) {
+            console.log("An error occured while reading the directory !");
+        }
+        else {
+            files.forEach(file => {
+                name = file.name.split(".");
+                file = name[1];
+                if (name[0] == requestID) {
+                    fileName = file.name;
+                    fs.rename(`${path.join(__dirname)}/files/${name[0]}.${name[1]}.${name[2]}`, `${path.join(__dirname)}/files/${name[1]}.GTAVV`, (err) => {
+                        if (err) console.log(err);
+                        else {
+                            res.download(`${path.join(__dirname)}/files/${file}.GTAVV`, (err) => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                else {
+                                    fs.rename(`${path.join(__dirname)}/files/${file}.GTAVV`, `${path.join(__dirname)}/files/${name[0]}.${name[1]}.${name[2]}`, (error) => {
+                                        if (error) console.log(error);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
