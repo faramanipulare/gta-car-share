@@ -6,6 +6,14 @@ const fu = require('express-fileupload');
 const path = require('path');
 const util = require('util');
 
+
+//IN BODY : <!-- <p class="card-text"><small>Last updated 3 mins ago</small></p> -->
+
+//TODO clean the code
+
+
+//TODO show when posted
+
 //create app
 const app = express();
 app.set('view engine', 'ejs');
@@ -41,6 +49,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
             let fileName = file.name.split(".");
             app.get(`/${fileName[0]}`, async (req, res) => {
                 let carList = [];
+                //TODO : sort by date when showing
                 await CarScheme.find({ categorie: `${fileName[0]}` }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
                 res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`, cars: carList });
                 carList.splice(0);
@@ -122,6 +131,8 @@ app.post("/upload", (req, res) => {
 
     res.redirect('/');
 });
+
+//TODO redirect at the right category after upload
 
 app.get("/download/:id", async (req, res) => {
     let requestID = req.params.id;
