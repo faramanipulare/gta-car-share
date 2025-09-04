@@ -45,7 +45,7 @@
                 <form method="post" action="upload" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="nameOverlay" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" required>
+                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" minlength="6" maxlength="20" required>
                         <div id="nameHelp" class="form-text">
                             Name that will be displayed over the vehicle's image
                         </div>

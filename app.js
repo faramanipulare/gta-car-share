@@ -11,8 +11,7 @@ const util = require('util');
 
 //TODO clean the code
 
-
-//TODO show when posted
+//TODO show date when posted
 
 //create app
 const app = express();
@@ -52,7 +51,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
                 let carList = [];
                 //TODO : sort by date when showing
                 await CarScheme.find({ categorie: `${fileName[0]}` }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
-                res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`, cars: carList });
+                res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList });
                 carList.splice(0);
             });
         });
