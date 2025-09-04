@@ -5,7 +5,9 @@
         <div class="container">
             <nav class="navbar d-block">
                 <div class="container-fluid">
-                    <span class="navbar-brand" href="#"><%= title %></span>
+                    <span class="navbar-brand" href="#">
+                        <%= title %>
+                    </span>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
                         aria-label="Toggle navigation">
@@ -45,14 +47,16 @@
                 <form method="post" action="upload" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="nameOverlay" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" minlength="6" maxlength="20" required>
+                        <input type="text" class="form-control" id="nameOverlay" name="vehicleName" minlength="6"
+                            maxlength="20" required>
                         <div id="nameHelp" class="form-text">
                             Name that will be displayed over the vehicle's image
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="selectCategory" class="form-label">Select vehicle category</label>
-                        <select class="form-select" aria-label="categorie select" id="selectCategory" name="categorie" required>
+                        <select class="form-select" aria-label="categorie select" id="selectCategory" name="categorie"
+                            required>
                             <option value="commercials" selected>Commercial</option>
                             <option value="compacts">Compact</option>
                             <option value="coupes">Coupe</option>
@@ -73,7 +77,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Select the vehicle file</label>
-                        <input class="form-control" type="file" id="vehicleFileSelect" accept=".GTAVV" name="vehicleFile" required>
+                        <input class="form-control" type="file" id="vehicleFileSelect" accept=".GTAVV"
+                            name="vehicleFile" required>
                     </div>
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Select the vehicle image to be displayed</label>
@@ -87,6 +92,19 @@
                 </form>
             </nav>
         </div>
+        <div id="ezoic-pub-ad-placeholder-115"></div>
+        <div id="ezoic-pub-ad-placeholder-114"></div>
+        <div id="ezoic-pub-ad-placeholder-113"></div>
+        <div id="ezoic-pub-ad-placeholder-112"></div>
+        <div id="ezoic-pub-ad-placeholder-111"></div>
+        <div id="ezoic-pub-ad-placeholder-110"></div>
+        <div id="ezoic-pub-ad-placeholder-109"></div>
+        <div id="ezoic-pub-ad-placeholder-105"></div>
+        <script>
+            ezstandalone.cmd.push(function () {
+                ezstandalone.showAds(105, 109, 110, 111, 112, 112, 114, 115);
+            });
+        </script>
     </body>
 
 </html>

@@ -5,11 +5,9 @@ const morgan = require('morgan');
 const fu = require('express-fileupload');
 const path = require('path');
 const util = require('util');
-
+const writeFile = util.promisify(fs.writeFile);
 
 //IN BODY : <!-- <p class="card-text"><small>Last updated 3 mins ago</small></p> -->
-
-//TODO clean the code
 
 //TODO show date when posted
 
@@ -34,11 +32,12 @@ const scheme = new mongoose.Schema({ //make new car schema
     name: String,
     categorie: String,
     mimetype: String,
+    actualDate: Date,
 }, { collection: 'cars' });
 
 const CarScheme = mongoose.model('CarScheme', scheme);
 
-app.get("/", (req, res) => { //redirect to "super" categorie
+app.get("", (req, res) => { //redirect to "super" categorie
     res.redirect("/super");
 });
 
@@ -50,7 +49,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
             app.get(`/${fileName[0]}`, async (req, res) => {
                 let carList = [];
                 //TODO : sort by date when showing
-                await CarScheme.find({ categorie: `${fileName[0]}` }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
+                await CarScheme.find({ categorie: `${fileName[0]}`, }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
                 res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList });
                 carList.splice(0);
             });
@@ -62,26 +61,13 @@ app.get("/upload", (req, res) => {
     res.render("upload.ejs", { title: "upload" });
 });
 
-const writeFile = util.promisify(fs.writeFile);
-const readdir = util.promisify(fs.readdir);
-
-const renameFile = (oldName, newName) => {
-    fs.rename(`${path.join(__dirname)}${oldName}`, `${path.join(__dirname)}/files/${myID}.GTAVV`, (error) => {
-        if (error) {
-            console.log(error);
-        }
-        else {
-            console.log("everything is ok !");
-        }
-    })
-}
-
 const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) => {
     let myID;
     await CarScheme.create({
         name: name,
         categorie: categorie,
-        mimetype: extension
+        mimetype: extension,
+        actualDate: new Date.now(),
     })
         .then(object => {
             console.log("Successfully saved to db");
@@ -113,9 +99,6 @@ const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imag
 
 app.post("/upload", (req, res) => {
     let ss = req.files;
-
-    let filename = ss['vehicleFile']['name'];
-
     let mimetype = ss['vehicleImage'].mimetype;
     const extensions = ["image/png", "image/jpeg", "image/webp", "image/jpg"];
     if (extensions.includes(mimetype)) {
@@ -126,14 +109,10 @@ app.post("/upload", (req, res) => {
             ss['vehicleFile']['data'],
             ss['vehicleFile']['name'],
             ss['vehicleImage']['data'],
-            ss['vehicleImage']['name'],
-            ext[1]);
+            ss['vehicleImage']['name'], ext[1]);
     }
-
-    res.redirect('/');
+    res.redirect(`${req.body['categorie']}`);
 });
-
-//TODO redirect at the right category after upload
 
 app.get("/download/:id", async (req, res) => {
     let requestID = req.params.id;
@@ -167,4 +146,8 @@ app.get("/download/:id", async (req, res) => {
             });
         }
     });
+});
+
+app.get("/ads.txt", (req, res) => {
+    res.redirect("https://srv.adstxtmanager.com/19390/gtacarshare.com");
 });
