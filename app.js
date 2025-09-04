@@ -151,3 +151,7 @@ app.get("/download/:id", async (req, res) => {
 app.get("/ads.txt", (req, res) => {
     res.redirect("https://srv.adstxtmanager.com/19390/gtacarshare.com");
 });
+
+app.get("/privacy", (req, res) => {
+    res.render("policy.ejs");
+});
