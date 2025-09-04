@@ -34,6 +34,7 @@ mongoose.connect("mongodb+srv://iyafuuhak:8RSoxoyvspOt5OC2@cluster0.dno3x3p.mong
 const scheme = new mongoose.Schema({ //make new car schema
     name: String,
     categorie: String,
+    mimetype: String,
 }, { collection: 'cars' });
 
 const CarScheme = mongoose.model('CarScheme', scheme);
@@ -81,6 +82,7 @@ const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imag
     await CarScheme.create({
         name: name,
         categorie: categorie,
+        mimetype: extension
     })
         .then(object => {
             console.log("Successfully saved to db");
@@ -136,9 +138,7 @@ app.post("/upload", (req, res) => {
 
 app.get("/download/:id", async (req, res) => {
     let requestID = req.params.id;
-    let fileName;
     let name;
-    let file;
     fs.readdir("files", { withFileTypes: true }, (error, files) => {
         if (error) {
             console.log("An error occured while reading the directory !");
