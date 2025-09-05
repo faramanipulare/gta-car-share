@@ -49,7 +49,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
             app.get(`/${fileName[0]}`, async (req, res) => {
                 let carList = [];
                 //TODO : sort by date when showing
-                await CarScheme.find({ categorie: `${fileName[0]}`, }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
+                await CarScheme.find({ categorie: `${fileName[0]}`, }).sort({actualDate: -1}).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
                 res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList });
                 carList.splice(0);
             });
@@ -67,7 +67,7 @@ const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imag
         name: name,
         categorie: categorie,
         mimetype: extension,
-        actualDate: new Date.now(),
+        actualDate: Date.now(),
     })
         .then(object => {
             console.log("Successfully saved to db");
@@ -153,5 +153,9 @@ app.get("/ads.txt", (req, res) => {
 });
 
 app.get("/privacy", (req, res) => {
-    res.render("policy.ejs");
+    res.render("privacy.ejs", {title: "PRIVACY"});
 });
+
+app.get("/about", (req, res) => {
+    res.render("about.ejs", {title: "ABOUT"});
+})

@@ -1,44 +1,7 @@
 <body>
     <div class="container">
         <nav class="navbar d-block">
-            <div class="container-fluid">
-                <span class="navbar-brand" href="#">
-                    <%= title %>
-                </span>
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                    aria-labelledby="offcanvasNavbarLabel">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Categories</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="nav-item"><a href="../upload"><button type="button"
-                                        class="btn btn-primary btn-lg">Upload a vehicle</button></a></li>
-                            <li class="nav-item"><a class="nav-link" href="commercials">Commercials</a></li>
-                            <li class="nav-item"><a class="nav-link" href="compacts">Compacts</a></li>
-                            <li class="nav-item"><a class="nav-link" href="coupes">Coupes</a></li>
-                            <li class="nav-item"><a class="nav-link" href="emergency">Emergency</a></li>
-                            <li class="nav-item"><a class="nav-link" href="military">Military</a></li>
-                            <li class="nav-item"><a class="nav-link" href="motorcycles">Motorcyles</a></li>
-                            <li class="nav-item"><a class="nav-link" href="muscle">Muscles</a></li>
-                            <li class="nav-item"><a class="nav-link" href="offroad">Offroad</a></li>
-                            <li class="nav-item"><a class="nav-link" href="openwheels">Open Wheels</a></li>
-                            <li class="nav-item"><a class="nav-link" href="planes">Planes</a></li>
-                            <li class="nav-item"><a class="nav-link" href="sedans">Sedans</a></li>
-                            <li class="nav-item"><a class="nav-link" href="service">Service</a></li>
-                            <li class="nav-item"><a class="nav-link" href="sportclassic">Sport Classic</a></li>
-                            <li class="nav-item"><a class="nav-link" href="sports">Sports</a></li>
-                            <li class="nav-item"><a class="nav-link" href="super">Super</a></li>
-                            <li class="nav-item"><a class="nav-link" href="suvs">Suvs</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <%- include("navbar.ejs"); %>
             <div class="row row-cols-1 row-cols-lg-4 g-4 py-5 px-5">
                 <% if (cars.lenght !=1) { %>
                     <% cars.forEach(car=> { %>
@@ -51,6 +14,7 @@
                                             <h5 class="card-title">
                                                 <%= car.name %>
                                             </h5>
+                                            <p class="card-text"><small>Posted on <%= car.actualDate.toLocaleDateString({year: "numeric", month: "2-digit", day: "2-digit"}); %></small></p>
                                         </div>
                                     </a>
                                 </div>
