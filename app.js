@@ -7,10 +7,6 @@ const path = require('path');
 const util = require('util');
 const writeFile = util.promisify(fs.writeFile);
 
-//IN BODY : <!-- <p class="card-text"><small>Last updated 3 mins ago</small></p> -->
-
-//TODO show date when posted
-
 //create app
 const app = express();
 app.set('view engine', 'ejs');
@@ -148,14 +144,11 @@ app.get("/download/:id", async (req, res) => {
     });
 });
 
-app.get("/ads.txt", (req, res) => {
-    res.redirect("https://srv.adstxtmanager.com/19390/gtacarshare.com");
-});
-
 app.get("/privacy", (req, res) => {
     res.render("privacy.ejs", {title: "PRIVACY"});
 });
 
 app.get("/about", (req, res) => {
     res.render("about.ejs", {title: "ABOUT"});
+
 })
