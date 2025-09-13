@@ -150,5 +150,4 @@ app.get("/privacy", (req, res) => {
 
 app.get("/about", (req, res) => {
     res.render("about.ejs", {title: "ABOUT"});
-
-})
+});
