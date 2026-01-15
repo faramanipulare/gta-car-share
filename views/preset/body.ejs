@@ -5,11 +5,11 @@
             <div class="row row-cols-1 row-cols-lg-4 g-4 py-5 px-5">
                 <% if (cars.lenght !=1) { %>
                     <% cars.forEach(car=> { %>
-                        <div class="col">
-                            <div class="card h-80">
+                        <div class="card-group">
+                            <div class="card">
                                 <div class="card text-bg-dark">
                                     <a class="nav-link" href="download/<%= car.id %>">
-                                        <img src="images/<%= car.id %>.<%= car.mimetype %>" class="card-img" alt="" />
+                                        <img src="images/<%= car.id %>.<%= car.mimetype %>" class="card-img" alt="" style="max-height: 120px; max-width: 300px; object-fit: cover;" loading="lazy"/>
                                         <div class="card-img-overlay">
                                             <h5 class="card-title">
                                                 <%= car.name %>
@@ -20,9 +20,10 @@
                                 </div>
                             </div>
                         </div>
-                        <% }); %>
-                            <% } %>
+                    <% }); %>
+                <% } %>
             </div>
         </nav>
     </div>
 </body>
+
