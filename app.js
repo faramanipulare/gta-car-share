@@ -33,64 +33,86 @@ const scheme = new mongoose.Schema({ //make new car schema
 
 const CarScheme = mongoose.model('CarScheme', scheme);
 
-app.get("", (req, res) => { //redirect to "super" categorie
-    res.redirect("/super");
+app.get("", (req, res) => { //redirect to home page
+    res.redirect("/home");
 });
+
 
 //get every single file in cars folder and make it an accessible page
 fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
     if (!err) {
+        const vehicleCategory = {
+            commercial: 0, compact: 0, coupe: 0, emergency: 0, military: 0, motorcycle: 0, muscle: 0, offroad: 0,
+            openwheel: 0, plane: 0, sedan: 0, service: 0, sport: 0, sportclassic: 0, super: 0, suv: 0
+        }
         files.forEach((file) => {
             let fileName = file.name.split(".");
-            app.get(`/${fileName[0]}`, async (req, res) => {
-                let carList = [];
-                //TODO : sort by date when showing
-                await CarScheme.find({ categorie: `${fileName[0]}`, }).sort({actualDate: -1}).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
-                res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList });
-                carList.splice(0);
-            });
+            let name = `${fileName[0]}`;
+            async function getCategorySize() {
+                await CarScheme.find({ categorie: name }).then(cars => {
+                    vehicleCategory[name] = cars.length
+                    app.get(`/${fileName[0]}`, async (req, res) => {
+                        let carList = [];
+                        await CarScheme.find({ categorie: `${fileName[0]}`, }).sort({ actualDate: -1 }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
+                        res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList, categorySize: vehicleCategory });
+                        carList.splice(0);
+                    });
+
+                    app.get("/home", (req, res) => {
+                        res.render('home.ejs', { title: "HOME", categorySize: vehicleCategory }); //home page
+                    });
+
+                    app.get("/upload", (req, res) => {
+                        res.render("upload.ejs", { title: "UPLOAD", categorySize: vehicleCategory });
+                    });
+
+                    app.get("/ads.txt", (req, res) => {
+                        res.redirect("https://srv.adstxtmanager.com/19390/gtacarshare.com");
+                    });
+
+                    app.get("/privacy", (req, res) => {
+                        res.render("privacy.ejs", { title: "PRIVACY", categorySize: vehicleCategory });
+                    });
+
+                    app.get("/about", (req, res) => {
+                        res.render("about.ejs", { title: "ABOUT", categorySize: vehicleCategory });
+                    });
+                }).catch(error => console.log(error));
+            }
+            getCategorySize();
         });
     }
 });
 
-app.get("/upload", (req, res) => {
-    res.render("upload.ejs", { title: "upload" });
-});
-
-const saveToDB = async (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) => {
+async function saveToDB (name, categorie, fileBuffer, fileName, imageBuffer, imageName, extension) {
     let myID;
     await CarScheme.create({
         name: name,
         categorie: categorie,
         mimetype: extension,
         actualDate: Date.now(),
-    })
-        .then(object => {
+    }).then(object => {
             console.log("Successfully saved to db");
             myID = object.id;
-        })
-        .catch(error => console.log(error));
+    }).catch(error => console.log(error));
+    
     await writeFile(`./public/images/${myID}.${imageName}`, imageBuffer, (error) => {
-        if (!error) {
+        if (!error) 
             console.log("File saved with success !");
-        }
     }).then(() => {
         fs.rename(`${path.join(__dirname)}/public/images/${myID}.${imageName}`, `${path.join(__dirname)}/public/images/${myID}.${extension}`, (error) => {
             if (error) {
                 console.log(error);
             }
-            else {
-                console.log("everything is ok !");
-            }
+            else console.log("everything is ok !");
         })
     });
+
     await writeFile(`./files/${myID}.${fileName}`, fileBuffer, (error) => {
         if (!error) {
             console.log("File saved with success !");
         }
-    }).then(() => {
-        console.log("Saved");
-    });
+    }).then(() => console.log("Saved"));
 }
 
 app.post("/upload", (req, res) => {
@@ -112,14 +134,13 @@ app.post("/upload", (req, res) => {
 
 app.get("/download/:id", async (req, res) => {
     let requestID = req.params.id;
-    let name;
     fs.readdir("files", { withFileTypes: true }, (error, files) => {
         if (error) {
             console.log("An error occured while reading the directory !");
         }
         else {
             files.forEach(file => {
-                name = file.name.split(".");
+                let name = file.name.split(".");
                 file = name[1];
                 if (name[0] == requestID) {
                     fileName = file.name;
@@ -142,12 +163,4 @@ app.get("/download/:id", async (req, res) => {
             });
         }
     });
-});
-
-app.get("/privacy", (req, res) => {
-    res.render("privacy.ejs", {title: "PRIVACY"});
-});
-
-app.get("/about", (req, res) => {
-    res.render("about.ejs", {title: "ABOUT"});
 });
