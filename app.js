@@ -37,6 +37,24 @@ app.get("", (req, res) => { //redirect to home page
     res.redirect("/home");
 });
 
+async function getCategoryLength() {
+    let vehicleCategory = {
+        commercial: 0, compact: 0, coupe: 0, emergency: 0, military: 0, motorcycle: 0, muscle: 0, offroad: 0,
+        openwheel: 0, plane: 0, sedan: 0, service: 0, sport: 0, sportclassic: 0, super: 0, suv: 0
+    }
+    fs.readdir("views/cars", { withFileTypes: true }, (error, files) => {
+        files.forEach(name => {
+            async function getToVehicleCategory() {
+                await CarScheme.find({ categorie: String(name['name']).split('.')[0] }).then(category => {
+                    vehicleCategory[String(name['name']).split('.')[0]] = category.length;
+                    console.log(vehicleCategory);
+                }).catch(error => console.log(error));
+            }
+            getToVehicleCategory();
+        });
+    });
+}
+
 //get every single file in cars folder and make it an accessible page
 fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
     if (!err) {
@@ -45,20 +63,6 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
             let name = `${fileName[0]}`;
             app.get(`/${fileName[0]}`, async (req, res) => {
                 let carList = [];
-                let vehicleCategory = {
-                    commercial: 0, compact: 0, coupe: 0, emergency: 0, military: 0, motorcycle: 0, muscle: 0, offroad: 0,
-                    openwheel: 0, plane: 0, sedan: 0, service: 0, sport: 0, sportclassic: 0, super: 0, suv: 0
-                }
-                fs.readdir("views/cars", { withFileTypes: true }, (error, files) => {
-                    files.forEach(name => {
-                        async function getToVehicleCategory() {
-                            await CarScheme.find({ categorie: String(name['name']).split('.')[0] }).then(category => {
-                                vehicleCategory[name] = category.length;
-                            }).catch(error => console.log(error));
-                        }
-                        getToVehicleCategory();
-                    });
-                });
                 await CarScheme.find({ categorie: `${fileName[0]}` }).sort({ actualDate: -1 }).then(cars => cars.forEach(car => carList.push(car))).catch(error => console.log(error));
                 res.render(`cars/${fileName[0]}.ejs`, { title: `${fileName[0]}`.toUpperCase(), cars: carList});
                 carList.splice(0);
@@ -68,6 +72,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
 });
 
 app.get("/home", (req, res) => {
+    getCategoryLength();
     res.render('home.ejs', { title: "HOME"}); //home page
 });
 
