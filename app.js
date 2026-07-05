@@ -37,7 +37,7 @@ app.get("", (req, res) => { //redirect to home page
     res.redirect("/home");
 });
 
-async function getCategoryLength() {
+/* async function getCategoryLength() {
     let vehicleCategory = {
         commercial: 0, compact: 0, coupe: 0, emergency: 0, military: 0, motorcycle: 0, muscle: 0, offroad: 0,
         openwheel: 0, plane: 0, sedan: 0, service: 0, sport: 0, sportclassic: 0, super: 0, suv: 0
@@ -53,7 +53,7 @@ async function getCategoryLength() {
             getToVehicleCategory();
         });
     });
-}
+} not working :(*/ 
 
 //get every single file in cars folder and make it an accessible page
 fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
@@ -71,26 +71,7 @@ fs.readdir("views/cars", { withFileTypes: true }, (err, files) => {
     }
 });
 
-app.get("/home", (req, res) => {
-    getCategoryLength();
-    res.render('home.ejs', { title: "HOME"}); //home page
-});
 
-app.get("/upload", (req, res) => {
-    res.render("upload.ejs", { title: "UPLOAD"});
-});
-
-app.get("/ads.txt", (req, res) => {
-    res.redirect("https://srv.adstxtmanager.com/19390/gtacarshare.com");
-});
-
-app.get("/privacy", (req, res) => {
-    res.render("privacy.ejs", { title: "PRIVACY"});
-});
-
-app.get("/about", (req, res) => {
-    res.render("about.ejs", { title: "ABOUT"});
-});
 
 async function saveToDB(name, categorie, fileBuffer, fileName, imageBuffer, imageName) {
     let myID;
@@ -179,4 +160,21 @@ app.get("/download/:id", async (req, res) => {
             });
         }
     });
+});
+
+app.get("/home", (req, res) => {
+    //getCategoryLength();
+    res.render('home.ejs', { title: "HOME"}); //home page
+});
+
+app.get("/upload", (req, res) => {
+    res.render("upload.ejs", { title: "UPLOAD"});
+});
+
+app.get("/privacy", (req, res) => {
+    res.render("privacy.ejs", { title: "PRIVACY"});
+});
+
+app.get("/about", (req, res) => {
+    res.render("about.ejs", { title: "ABOUT"});
 });
