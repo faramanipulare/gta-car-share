@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "start": "node app.js"
+   },
   "repository": {
     "type": "git",
     "url": "git+https://oauth2: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@github.com/akiimoo/gta-car-share.git"
