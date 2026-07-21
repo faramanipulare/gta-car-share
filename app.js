@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 app.use(fu());
 
 //connect to db
-mongoose.connect("")
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         app.listen(3333, () => {
             console.log("up and running !");
